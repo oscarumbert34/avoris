@@ -9,18 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class StudentTest {
 
     private Student student;
-    private List<Subject> subjects;
+    private List<Subject> subjects =  new ArrayList<>();;
 
     @BeforeEach
     public void setUp(){
-        subjects = new ArrayList<>();
         subjects.add(new Subject("MATEMATICAS", 5));
         subjects.add(new Subject("LENGUA", 10));
-        student = new Student("OSCAR",22 , LocalDate.of(2022,2,10));
+        student = new Student("OSCAR",22 , LocalDate.of(2022,2,10), subjects);
     }
 
     @Test
@@ -30,7 +31,9 @@ public class StudentTest {
 
         assertAll(() -> assertEquals(student.getName(), "OSCAR"),
                 () -> assertEquals(student.getAge(), 22),
-                () -> assertEquals(student.getEndDate(),"10/02"));
+                () -> assertEquals(student.getEndDate(),"10/2"),
+                () -> assertEquals(student.getSubjects().get(0), new Subject("MATEMATICAS", 5)),
+                () -> assertEquals(student.getSubjects().get(1), new Subject("LENGUA", 10)));
     }
 
     @Test
@@ -40,7 +43,9 @@ public class StudentTest {
         Subject subject = new Subject("INGLES", 6);
         student.getSubjects().add(subject);
 
-        assertFalse(student.contains(subject));
+        assertFalse(student.getSubjects().contains(subject));
+        assertEquals(student.getSubjects().size(), 2);
+
     }
     @Test
     @DisplayName("Este metodo valida que no le pueden agregar materias al estudiante" +
@@ -50,28 +55,28 @@ public class StudentTest {
         Subject subject = new Subject("INGLES", 9);
         subjects.add(subject);
 
-        assertFalse(student.contains(subject));
+        assertFalse(student.getSubjects().contains(subject));
+        assertEquals(student.getSubjects().size(), 2);
     }
 
     @Test
-    @DisplayName("Este metodo valida que no le pueden agregar materias al estudiante" +
-            "en el caso de agregarle materias a la lista que se paso en el constructor del objeto Student")
-    public void whenModifySubjectDoNotModifyTheOriginalSubjectList(){
+    @DisplayName("Este metodo valida que no le pueden modificar materias al estudiante" +
+            "en el caso de modificarle una materia a la lista que se paso en el constructor del objeto Student")
+    public void whenTryToModifySubjectOfTheOriginalList(){
 
-        student.getSubjects().get(0).setGrade(5);
+        subjects.get(0).setGrade(7);
 
+        assertEquals(student.getSubjects().get(0).getGrade(),5);
 
-        assertEquals(student.getSubjects().get(0).getGrade(),2);
     }
 
     @Test
-    @DisplayName("Este metodo valida que no le pueden agregar materias al estudiante" +
-            "en el caso de agregarle materias a la lista que se paso en el constructor del objeto Student")
-    public void whenModifyItemToOriginalListDoNotModifyTheOriginalSubjectList(){
+    @DisplayName("Este metodo valida que no le pueden modificar materias al estudiante" +
+            "en el caso de obtener la lista de materias asociadas al estudiante")
+    public void whenTryToModifySubjectOfTheStudentList(){
 
-        subjects.get(0).setGrade(5);
+        student.getSubjects().get(0).setGrade(10);
 
-
-        assertEquals(student.getSubjects().get(0).getGrade(),2);
+        assertEquals(student.getSubjects().get(0).getGrade(),5);
     }
 }
